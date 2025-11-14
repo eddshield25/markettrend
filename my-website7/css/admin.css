@@ -148,19 +148,6 @@ body {
     gap: 1rem;
 }
 
-/* Admin Ad Container */
-.admin-ad {
-    background: var(--admin-card);
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--admin-border);
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 120px;
-}
-
 /* Tabs */
 .tabs {
     display: flex;
@@ -352,10 +339,5 @@ body {
     .login-box {
         padding: 2rem;
         margin: 1rem;
-    }
-
-    .admin-ad {
-        padding: 1rem;
-        min-height: 100px;
     }
 }
