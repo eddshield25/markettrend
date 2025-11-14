@@ -2,8 +2,57 @@
 
 // Initialize the app
 function init() {
+    initAuth();
     initProducts();
     setupEventListeners();
+    setupButtonHandlers();
+}
+
+// Set up button handlers
+function setupButtonHandlers() {
+    // Shop Now button
+    const shopNowBtn = document.querySelector('.btn-primary[href="#products"]');
+    if (shopNowBtn) {
+        shopNowBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productsSection = document.getElementById('products');
+            if (productsSection) {
+                productsSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    }
+
+    // Trending Now button
+    const trendingBtn = document.querySelector('.btn-secondary[href="#trending"]');
+    if (trendingBtn) {
+        trendingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const trendingSection = document.getElementById('trending');
+            if (trendingSection) {
+                trendingSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    }
+
+    // Admin link
+    const adminLink = document.getElementById('admin-link');
+    if (adminLink) {
+        adminLink.addEventListener('click', (e) => {
+            if (!isLoggedIn()) {
+                e.preventDefault();
+                const loginModal = document.getElementById('login-modal');
+                if (loginModal) {
+                    loginModal.classList.add('active');
+                }
+            }
+        });
+    }
 }
 
 // Set up event listeners
@@ -35,13 +84,16 @@ function setupEventListeners() {
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            const href = this.getAttribute('href');
+            if (href !== '#products' && href !== '#trending') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
         });
     });
