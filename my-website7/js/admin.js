@@ -17,12 +17,21 @@ function initAdmin() {
 // Show login screen
 function showLogin() {
     document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('forgot-password-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+}
+
+// Show forgot password screen
+function showForgotPassword() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('forgot-password-screen').style.display = 'flex';
     document.getElementById('dashboard').style.display = 'none';
 }
 
 // Show dashboard
 function showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('forgot-password-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadAdminProducts();
 }
@@ -43,7 +52,32 @@ function setupEventListeners() {
                     showDashboard();
                 }, 1000);
             } else {
-                showNotification('Invalid credentials!', 'error');
+                showNotification('Invalid username or password!', 'error');
+            }
+        });
+    }
+    
+    // Forgot password form
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            
+            if (!isValidEmail(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            const result = forgotPassword(email);
+            if (result.success) {
+                showNotification(result.message);
+                document.getElementById('reset-email').value = '';
+                setTimeout(() => {
+                    showLogin();
+                }, 2000);
+            } else {
+                showNotification(result.message, 'error');
             }
         });
     }
@@ -99,7 +133,7 @@ function loadAdminProducts() {
     
     if (productsList) {
         if (products.length === 0) {
-            productsList.innerHTML = '<p>No products found.</p>';
+            productsList.innerHTML = '<p>No products found. Add your first product!</p>';
             return;
         }
         
@@ -111,6 +145,7 @@ function loadAdminProducts() {
                         <span>${formatPrice(product.price)}</span>
                         <span>${product.source}</span>
                         <span>${product.category}</span>
+                        ${product.featured ? '<span style="color: var(--admin-accent);">★ Featured</span>' : ''}
                     </div>
                 </div>
                 <div class="product-actions">
@@ -131,6 +166,7 @@ function addProduct() {
     const source = document.getElementById('product-source').value;
     const category = document.getElementById('product-category').value;
     const image = document.getElementById('product-image').value;
+    const featured = document.getElementById('product-featured').checked;
     
     // Validation
     if (!title || !price || !description || !affiliateLink || !source || !category || !image) {
@@ -138,8 +174,13 @@ function addProduct() {
         return;
     }
     
+    if (price <= 0) {
+        showNotification('Please enter a valid price', 'error');
+        return;
+    }
+    
     if (!isValidUrl(affiliateLink) || !isValidUrl(image)) {
-        showNotification('Please enter valid URLs', 'error');
+        showNotification('Please enter valid URLs for affiliate link and image', 'error');
         return;
     }
     
@@ -153,7 +194,7 @@ function addProduct() {
         source,
         category,
         image,
-        featured: false,
+        featured,
         status: 'active'
     };
     
@@ -186,6 +227,7 @@ function editProduct(productId) {
     document.getElementById('product-source').value = product.source;
     document.getElementById('product-category').value = product.category;
     document.getElementById('product-image').value = product.image;
+    document.getElementById('product-featured').checked = product.featured;
     
     // Change form to update mode
     currentEditingId = productId;
@@ -211,10 +253,16 @@ function updateProduct(productId) {
     const source = document.getElementById('product-source').value;
     const category = document.getElementById('product-category').value;
     const image = document.getElementById('product-image').value;
+    const featured = document.getElementById('product-featured').checked;
     
     // Validation
     if (!title || !price || !description || !affiliateLink || !source || !category || !image) {
         showNotification('Please fill all required fields', 'error');
+        return;
+    }
+    
+    if (price <= 0) {
+        showNotification('Please enter a valid price', 'error');
         return;
     }
     
@@ -227,7 +275,8 @@ function updateProduct(productId) {
         affiliateLink,
         source,
         category,
-        image
+        image,
+        featured
     };
     
     saveProducts(products);
@@ -273,8 +322,9 @@ function importBulkProducts() {
         
         const products = loadProducts();
         let importedCount = 0;
+        let errors = [];
         
-        newProducts.forEach(productData => {
+        newProducts.forEach((productData, index) => {
             if (productData.title && productData.price && productData.description && 
                 productData.affiliateLink && productData.source && productData.category && productData.image) {
                 
@@ -293,18 +343,41 @@ function importBulkProducts() {
                 
                 products.push(newProduct);
                 importedCount++;
+            } else {
+                errors.push(`Product ${index + 1} missing required fields`);
             }
         });
         
         saveProducts(products);
         document.getElementById('bulk-data').value = '';
         
-        showNotification(`${importedCount} products imported successfully!`);
+        let message = `${importedCount} products imported successfully!`;
+        if (errors.length > 0) {
+            message += ` ${errors.length} products had errors.`;
+        }
+        
+        showNotification(message);
         loadAdminProducts();
         showTab('products-tab');
         
     } catch (error) {
         showNotification('Invalid JSON format. Please check your data.', 'error');
+    }
+}
+
+// Change password
+function changePassword() {
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    
+    const result = changePassword(newPassword, confirmPassword);
+    
+    if (result.success) {
+        showNotification(result.message);
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+    } else {
+        showNotification(result.message, 'error');
     }
 }
 
