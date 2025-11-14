@@ -1,27 +1,18 @@
-.auth-container {
-    text-align: center;
-}
-
-.auth-container h2 {
-    margin-bottom: 2rem;
-    color: var(--dark);
-}
-
 .auth-info {
     margin-top: 1.5rem;
     padding: 1rem;
-    background-color: #f8fafc;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
-    border-left: 4px solid var(--primary);
+    border-left: 4px solid var(--admin-accent);
 }
 
 .auth-info p {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
-    color: var(--gray);
+    color: var(--admin-text-secondary);
 }
 
 .auth-info p:first-child {
     font-weight: 600;
-    color: var(--dark);
+    color: var(--admin-text);
 }
