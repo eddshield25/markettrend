@@ -244,4 +244,69 @@ function updateProduct(productId) {
 
 // Delete product
 function deleteProduct(productId) {
-    if (confirm('Are you sure
+    if (confirm('Are you sure you want to delete this product?')) {
+        const products = loadProducts();
+        const updatedProducts = products.filter(p => p.id !== productId);
+        saveProducts(updatedProducts);
+        
+        showNotification('Product deleted successfully!');
+        loadAdminProducts();
+    }
+}
+
+// Bulk import products
+function importBulkProducts() {
+    const bulkData = document.getElementById('bulk-data').value;
+    
+    if (!bulkData.trim()) {
+        showNotification('Please enter JSON data', 'error');
+        return;
+    }
+    
+    try {
+        const newProducts = JSON.parse(bulkData);
+        
+        if (!Array.isArray(newProducts)) {
+            showNotification('Invalid format. Expected an array of products.', 'error');
+            return;
+        }
+        
+        const products = loadProducts();
+        let importedCount = 0;
+        
+        newProducts.forEach(productData => {
+            if (productData.title && productData.price && productData.description && 
+                productData.affiliateLink && productData.source && productData.category && productData.image) {
+                
+                const newProduct = {
+                    id: generateId(),
+                    title: productData.title,
+                    price: parseFloat(productData.price),
+                    description: productData.description,
+                    affiliateLink: productData.affiliateLink,
+                    source: productData.source,
+                    category: productData.category,
+                    image: productData.image,
+                    featured: productData.featured || false,
+                    status: 'active'
+                };
+                
+                products.push(newProduct);
+                importedCount++;
+            }
+        });
+        
+        saveProducts(products);
+        document.getElementById('bulk-data').value = '';
+        
+        showNotification(`${importedCount} products imported successfully!`);
+        loadAdminProducts();
+        showTab('products-tab');
+        
+    } catch (error) {
+        showNotification('Invalid JSON format. Please check your data.', 'error');
+    }
+}
+
+// Initialize admin when page loads
+document.addEventListener('DOMContentLoaded', initAdmin);
