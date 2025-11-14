@@ -1,12 +1,15 @@
 :root {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
-    --secondary: #f59e0b;
-    --light: #f8fafc;
-    --dark: #1e293b;
-    --gray: #64748b;
-    --success: #10b981;
-    --danger: #ef4444;
+    --tiktok-black: #000000;
+    --tiktok-dark: #121212;
+    --tiktok-gray: #2a2a2a;
+    --tiktok-pink: #ff0050;
+    --tiktok-blue: #00f2ea;
+    --tiktok-text: #ffffff;
+    --tiktok-text-secondary: #a8a8a8;
+    --accent-primary: #ff0050;
+    --accent-secondary: #00f2ea;
+    --success: #00d26a;
+    --danger: #ff375f;
 }
 
 * {
@@ -17,8 +20,8 @@
 }
 
 body {
-    background-color: #f1f5f9;
-    color: var(--dark);
+    background-color: var(--tiktok-black);
+    color: var(--tiktok-text);
     line-height: 1.6;
 }
 
@@ -31,11 +34,12 @@ body {
 
 /* Header & Navigation */
 header {
-    background-color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--tiktok-dark);
+    border-bottom: 1px solid var(--tiktok-gray);
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(10px);
 }
 
 .navbar {
@@ -51,8 +55,11 @@ header {
     gap: 10px;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--tiktok-text);
     text-decoration: none;
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .nav-links {
@@ -63,13 +70,24 @@ header {
 
 .nav-links a {
     text-decoration: none;
-    color: var(--dark);
+    color: var(--tiktok-text-secondary);
     font-weight: 500;
-    transition: color 0.3s;
+    transition: all 0.3s;
+    position: relative;
 }
 
 .nav-links a:hover, .nav-links a.active {
-    color: var(--primary);
+    color: var(--tiktok-text);
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
 }
 
 .mobile-menu-btn {
@@ -78,120 +96,211 @@ header {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--dark);
+    color: var(--tiktok-text);
 }
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
-    padding: 4rem 0;
+    background: linear-gradient(135deg, var(--tiktok-dark) 0%, var(--tiktok-black) 100%);
+    padding: 6rem 0;
     text-align: center;
-    border-radius: 0 0 20px 20px;
-    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 0, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 242, 234, 0.1) 0%, transparent 50%);
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--tiktok-text), var(--tiktok-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
 }
 
 .hero p {
     font-size: 1.2rem;
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto 2rem;
-    opacity: 0.9;
+    color: var(--tiktok-text-secondary);
 }
 
 .btn {
     display: inline-block;
     padding: 0.8rem 1.5rem;
-    background-color: var(--secondary);
-    color: var(--dark);
     border: none;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s;
-}
-
-.btn:hover {
-    background-color: #eab308;
-    transform: translateY(-2px);
+    text-align: center;
 }
 
 .btn-primary {
-    background-color: var(--primary);
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--accent-primary));
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 80, 0.4);
 }
 
-.btn-danger {
-    background-color: var(--danger);
-    color: white;
+.btn-secondary {
+    background: transparent;
+    color: var(--tiktok-text);
+    border: 2px solid var(--tiktok-blue);
 }
 
-.btn-danger:hover {
-    background-color: #dc2626;
+.btn-secondary:hover {
+    background: var(--tiktok-blue);
+    color: var(--tiktok-black);
 }
 
-.btn-full {
-    width: 100%;
+/* Categories Section */
+.categories {
+    padding: 4rem 0;
+    background-color: var(--tiktok-dark);
 }
 
-/* Products Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.category-card {
+    background: var(--tiktok-gray);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--tiktok-pink);
+}
+
+.category-card.tiktok:hover {
+    border-color: var(--tiktok-pink);
+}
+
+.category-card.amazon:hover {
+    border-color: #ff9900;
+}
+
+.category-card.instagram:hover {
+    border-color: #e4405f;
+}
+
+.category-card i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.category-card.tiktok i {
+    color: var(--tiktok-pink);
+}
+
+.category-card.amazon i {
+    color: #ff9900;
+}
+
+.category-card.instagram i {
+    color: #e4405f;
+}
+
+.category-card h3 {
+    margin-bottom: 0.5rem;
+    color: var(--tiktok-text);
+}
+
+.category-card p {
+    color: var(--tiktok-text-secondary);
+}
+
+/* Products Section */
+.products-section {
+    padding: 4rem 0;
+}
+
 .section-title {
     text-align: center;
     margin-bottom: 2rem;
-    font-size: 2rem;
-    color: var(--dark);
+    font-size: 2.5rem;
+    color: var(--tiktok-text);
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
 }
 
 .filters {
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     flex-wrap: wrap;
 }
 
 .filter-btn {
-    padding: 0.5rem 1rem;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 20px;
+    padding: 0.7rem 1.5rem;
+    background: var(--tiktok-gray);
+    color: var(--tiktok-text-secondary);
+    border: 1px solid var(--tiktok-gray);
+    border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s;
+    font-weight: 500;
 }
 
 .filter-btn.active, .filter-btn:hover {
-    background-color: var(--primary);
-    color: white;
-    border-color: var(--primary);
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
+    color: var(--tiktok-text);
+    border-color: transparent;
 }
 
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
-    margin-bottom: 3rem;
 }
 
 .product-card {
-    background-color: white;
+    background: var(--tiktok-gray);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    position: relative;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    border-color: var(--tiktok-pink);
+    box-shadow: 0 10px 30px rgba(255, 0, 80, 0.2);
 }
 
 .product-image {
@@ -200,14 +309,26 @@ header {
     object-fit: cover;
 }
 
+.product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--accent-primary));
+    color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
 .product-info {
     padding: 1.5rem;
 }
 
 .product-source {
     display: inline-block;
-    background-color: var(--primary);
-    color: white;
+    background: var(--tiktok-dark);
+    color: var(--tiktok-text-secondary);
     padding: 0.3rem 0.7rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -217,6 +338,7 @@ header {
 .product-title {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
+    color: var(--tiktok-text);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -224,7 +346,7 @@ header {
 }
 
 .product-description {
-    color: var(--gray);
+    color: var(--tiktok-text-secondary);
     font-size: 0.9rem;
     margin-bottom: 1rem;
     display: -webkit-box;
@@ -234,15 +356,15 @@ header {
 }
 
 .product-price {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: var(--dark);
+    color: var(--tiktok-text);
     margin-bottom: 1rem;
 }
 
 .product-price .original {
     font-size: 0.9rem;
-    color: var(--gray);
+    color: var(--tiktok-text-secondary);
     text-decoration: line-through;
     margin-left: 0.5rem;
 }
@@ -251,93 +373,32 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
 }
 
-/* Admin Panel */
-.admin-panel {
-    background-color: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    margin-bottom: 3rem;
-    display: none;
-}
-
-.admin-panel.active {
-    display: block;
-}
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.form-row {
-    display: flex;
-    gap: 1rem;
-}
-
-.form-row .form-group {
+.product-actions .btn {
     flex: 1;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
 }
 
-textarea.form-control {
-    min-height: 100px;
-    resize: vertical;
+/* Trending Section */
+.trending-section {
+    padding: 4rem 0;
+    background: var(--tiktok-dark);
 }
 
-.tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 1.5rem;
-}
-
-.tab {
-    padding: 0.8rem 1.5rem;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-}
-
-.tab.active {
-    border-bottom: 2px solid var(--primary);
-    color: var(--primary);
-    font-weight: 500;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
+.trending-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
 /* Footer */
 footer {
-    background-color: var(--dark);
-    color: white;
+    background-color: var(--tiktok-dark);
     padding: 3rem 0;
-    margin-top: 3rem;
+    border-top: 1px solid var(--tiktok-gray);
 }
 
 .footer-content {
@@ -355,10 +416,11 @@ footer {
 .footer-section h3 {
     margin-bottom: 1rem;
     font-size: 1.2rem;
+    color: var(--tiktok-text);
 }
 
 .footer-section a {
-    color: #cbd5e1;
+    color: var(--tiktok-text-secondary);
     text-decoration: none;
     display: block;
     margin-bottom: 0.5rem;
@@ -366,7 +428,7 @@ footer {
 }
 
 .footer-section a:hover {
-    color: white;
+    color: var(--tiktok-text);
 }
 
 .social-links {
@@ -381,21 +443,22 @@ footer {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: #334155;
+    background-color: var(--tiktok-gray);
     border-radius: 50%;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
 }
 
 .social-links a:hover {
-    background-color: var(--primary);
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
+    transform: translateY(-2px);
 }
 
 .copyright {
     text-align: center;
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 1px solid #334155;
-    color: #94a3b8;
+    border-top: 1px solid var(--tiktok-gray);
+    color: var(--tiktok-text-secondary);
 }
 
 /* Modal */
@@ -406,10 +469,11 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
     z-index: 1000;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(5px);
 }
 
 .modal.active {
@@ -417,7 +481,7 @@ footer {
 }
 
 .modal-content {
-    background-color: white;
+    background-color: var(--tiktok-dark);
     border-radius: 12px;
     width: 90%;
     max-width: 500px;
@@ -425,6 +489,7 @@ footer {
     overflow-y: auto;
     padding: 2rem;
     position: relative;
+    border: 1px solid var(--tiktok-gray);
 }
 
 .close-modal {
@@ -435,7 +500,12 @@ footer {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--gray);
+    color: var(--tiktok-text-secondary);
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: var(--tiktok-text);
 }
 
 /* Toast Notifications */
@@ -444,14 +514,15 @@ footer {
     bottom: 20px;
     right: 20px;
     padding: 1rem 1.5rem;
-    background-color: var(--success);
-    color: white;
+    background: var(--tiktok-gray);
+    color: var(--tiktok-text);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(100px);
     opacity: 0;
     transition: all 0.3s;
     z-index: 1001;
+    border-left: 4px solid var(--success);
 }
 
 .toast.active {
@@ -460,7 +531,7 @@ footer {
 }
 
 .toast.error {
-    background-color: var(--danger);
+    border-left-color: var(--danger);
 }
 
 /* Responsive */
@@ -471,10 +542,11 @@ footer {
         top: 100%;
         left: 0;
         width: 100%;
-        background-color: white;
+        background-color: var(--tiktok-dark);
         flex-direction: column;
         padding: 1rem 0;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        border-top: 1px solid var(--tiktok-gray);
     }
 
     .nav-links.active {
@@ -486,17 +558,23 @@ footer {
     }
 
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
     }
 
-    .form-row {
-        flex-direction: column;
-        gap: 0;
+    .filters {
+        gap: 0.5rem;
     }
 
-    .admin-header {
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-content {
         flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
     }
 }
