@@ -1,18 +1,1 @@
-.auth-info {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border-left: 4px solid var(--admin-accent);
-}
 
-.auth-info p {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--admin-text-secondary);
-}
-
-.auth-info p:first-child {
-    font-weight: 600;
-    color: var(--admin-text);
-}
