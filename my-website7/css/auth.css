@@ -1,0 +1,27 @@
+.auth-container {
+    text-align: center;
+}
+
+.auth-container h2 {
+    margin-bottom: 2rem;
+    color: var(--dark);
+}
+
+.auth-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.auth-info p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.auth-info p:first-child {
+    font-weight: 600;
+    color: var(--dark);
+}
