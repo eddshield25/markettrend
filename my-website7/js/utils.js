@@ -43,6 +43,11 @@ function closeAllModals() {
     modals.forEach(modal => modal.classList.remove('active'));
 }
 
+// Simulate API delay
+function simulateAPIDelay() {
+    return new Promise(resolve => setTimeout(resolve, 500));
+}
+
 // Debounce function for search
 function debounce(func, wait) {
     let timeout;
@@ -54,9 +59,4 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-}
-
-// Simulate API delay
-function simulateAPIDelay() {
-    return new Promise(resolve => setTimeout(resolve, 500));
 }
