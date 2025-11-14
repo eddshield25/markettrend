@@ -20,6 +20,12 @@ function isValidUrl(string) {
     }
 }
 
+// Validate Email
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
 // Show notification
 function showNotification(message, type = 'success') {
     // Create notification element
@@ -34,14 +40,30 @@ function showNotification(message, type = 'success') {
         border-radius: 8px;
         z-index: 10000;
         animation: slideIn 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
     `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
     
     notification.textContent = message;
     document.body.appendChild(notification);
     
     // Remove after 3 seconds
     setTimeout(() => {
-        notification.remove();
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            notification.remove();
+            style.remove();
+        }, 300);
     }, 3000);
 }
 
@@ -97,15 +119,47 @@ function saveProducts(products) {
     localStorage.setItem('tikshop_products', JSON.stringify(products));
 }
 
+// Load admin credentials from localStorage
+function loadAdminCredentials() {
+    const stored = localStorage.getItem('tikshop_admin_credentials');
+    if (stored) {
+        return JSON.parse(stored);
+    } else {
+        // Default admin credentials (change these in production)
+        const defaultCredentials = {
+            username: 'admin',
+            password: 'admin123', // Change this to a secure password
+            email: 'admin@tikshop.com'
+        };
+        saveAdminCredentials(defaultCredentials);
+        return defaultCredentials;
+    }
+}
+
+// Save admin credentials to localStorage
+function saveAdminCredentials(credentials) {
+    localStorage.setItem('tikshop_admin_credentials', JSON.stringify(credentials));
+}
+
 // Check if user is logged in
 function isLoggedIn() {
-    return localStorage.getItem('tikshop_admin') === 'true';
+    return localStorage.getItem('tikshop_admin_loggedin') === 'true';
+}
+
+// Set login status
+function setLoginStatus(loggedIn) {
+    if (loggedIn) {
+        localStorage.setItem('tikshop_admin_loggedin', 'true');
+    } else {
+        localStorage.removeItem('tikshop_admin_loggedin');
+    }
 }
 
 // Login function
 function login(username, password) {
-    if (username === 'admin' && password === 'password123') {
-        localStorage.setItem('tikshop_admin', 'true');
+    const credentials = loadAdminCredentials();
+    if (username === credentials.username && password === credentials.password) {
+        setLoginStatus(true);
         return true;
     }
     return false;
@@ -113,9 +167,50 @@ function login(username, password) {
 
 // Logout function
 function logout() {
-    localStorage.removeItem('tikshop_admin');
+    setLoginStatus(false);
     showNotification('Logged out successfully');
     setTimeout(() => {
         window.location.reload();
     }, 1000);
+}
+
+// Change password function
+function changePassword(newPassword, confirmPassword) {
+    if (!newPassword || !confirmPassword) {
+        return { success: false, message: 'Please fill in all fields' };
+    }
+    
+    if (newPassword !== confirmPassword) {
+        return { success: false, message: 'Passwords do not match' };
+    }
+    
+    if (newPassword.length < 6) {
+        return { success: false, message: 'Password must be at least 6 characters' };
+    }
+    
+    const credentials = loadAdminCredentials();
+    credentials.password = newPassword;
+    saveAdminCredentials(credentials);
+    
+    return { success: true, message: 'Password updated successfully' };
+}
+
+// Forgot password function (simulated - in real app, this would send an email)
+function forgotPassword(email) {
+    const credentials = loadAdminCredentials();
+    
+    if (email !== credentials.email) {
+        return { success: false, message: 'Email not found' };
+    }
+    
+    // In a real application, you would:
+    // 1. Generate a reset token
+    // 2. Send an email with reset link
+    // 3. Store the token for verification
+    
+    // For demo purposes, we'll just show a message
+    return { 
+        success: true, 
+        message: 'Password reset instructions have been sent to your email' 
+    };
 }
