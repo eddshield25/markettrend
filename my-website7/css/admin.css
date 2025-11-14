@@ -96,17 +96,20 @@ body {
     flex: 1;
 }
 
-.demo-credentials {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-    text-align: left;
+/* Login Links */
+.login-links {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.login-links a {
+    color: var(--admin-secondary);
+    text-decoration: none;
     font-size: 0.9rem;
 }
 
-.demo-credentials p {
-    margin: 0.25rem 0;
+.login-links a:hover {
+    text-decoration: underline;
 }
 
 .back-link {
@@ -152,6 +155,7 @@ body {
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--admin-border);
     padding-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -162,6 +166,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .tab-btn.active,
@@ -217,6 +222,43 @@ body {
     border: 1px solid var(--admin-border);
 }
 
+/* Checkbox */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--admin-border);
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.checkbox-label input:checked + .checkmark {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+}
+
+.checkbox-label input:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Bulk Upload */
 .bulk-upload textarea {
     width: 100%;
     height: 300px;
@@ -229,8 +271,37 @@ body {
     resize: vertical;
 }
 
+.upload-instructions {
+    background: var(--admin-card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--admin-border);
+    margin-bottom: 1rem;
+}
+
+.upload-instructions h3 {
+    margin: 0 0 1rem 0;
+}
+
+.upload-instructions pre {
+    background: var(--admin-bg);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.9rem;
+}
+
 .bulk-upload .btn {
     margin-top: 1rem;
+}
+
+/* Settings */
+.settings-form {
+    background: var(--admin-card);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--admin-border);
+    max-width: 500px;
 }
 
 /* Responsive */
@@ -263,5 +334,10 @@ body {
 
     .form-row {
         flex-direction: column;
+    }
+
+    .login-box {
+        padding: 2rem;
+        margin: 1rem;
     }
 }
