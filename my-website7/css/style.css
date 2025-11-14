@@ -102,46 +102,18 @@ header {
     flex-wrap: wrap;
 }
 
-/* Buttons */
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s;
-    display: inline-block;
+/* Ad Container */
+.ad-container {
+    background: var(--tiktok-dark);
+    padding: 2rem 0;
+    border-bottom: 1px solid #333;
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
-    color: white;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 0, 80, 0.4);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--tiktok-text);
-    border: 2px solid var(--tiktok-blue);
-}
-
-.btn-secondary:hover {
-    background: var(--tiktok-blue);
-    color: var(--tiktok-black);
-}
-
-.btn-danger {
-    background: #dc2626;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #b91c1c;
+.ad-container .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
 }
 
 /* Products Section */
@@ -255,6 +227,48 @@ header {
     text-align: center;
 }
 
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-blue));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 80, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--tiktok-text);
+    border: 2px solid var(--tiktok-blue);
+}
+
+.btn-secondary:hover {
+    background: var(--tiktok-blue);
+    color: var(--tiktok-black);
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
 /* Footer */
 footer {
     background: var(--tiktok-dark);
@@ -294,5 +308,9 @@ footer {
     .filter-btn {
         padding: 6px 12px;
         font-size: 0.9rem;
+    }
+
+    .ad-container {
+        padding: 1rem 0;
     }
 }
