@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AffiliateShop - TikTok & Amazon Finds</title>
+    <title>TikShop - Viral Products from TikTok & Amazon</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -14,13 +13,13 @@
         <div class="container">
             <nav class="navbar">
                 <a href="#" class="logo">
-                    <i class="fas fa-shopping-bag"></i>
-                    AffiliateShop
+                    <i class="fas fa-bolt"></i>
+                    TikShop
                 </a>
                 <ul class="nav-links">
                     <li><a href="#" class="active">Home</a></li>
                     <li><a href="#products">Products</a></li>
-                    <li><a href="#" id="admin-login-link">Admin Login</a></li>
+                    <li><a href="admin.html" id="admin-link">Admin</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -34,137 +33,61 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Discover Amazing Affiliate Products</h1>
-            <p>Curated products from TikTok, Amazon, and more. Best deals delivered to you.</p>
-            <a href="#products" class="btn">Shop Now</a>
+            <h1>Discover Viral TikTok Products</h1>
+            <p>Shop the hottest products trending on TikTok, Amazon, and social media. Curated just for you.</p>
+            <a href="#products" class="btn btn-primary">Shop Now</a>
+            <a href="#trending" class="btn btn-secondary">Trending Now</a>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">Shop by Platform</h2>
+            <div class="categories-grid">
+                <div class="category-card tiktok">
+                    <i class="fab fa-tiktok"></i>
+                    <h3>TikTok Finds</h3>
+                    <p>Viral products from TikTok</p>
+                </div>
+                <div class="category-card amazon">
+                    <i class="fab fa-amazon"></i>
+                    <h3>Amazon</h3>
+                    <p>Best-selling Amazon products</p>
+                </div>
+                <div class="category-card instagram">
+                    <i class="fab fa-instagram"></i>
+                    <h3>Instagram</h3>
+                    <p>Featured on Instagram</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Products Section -->
-    <section id="products" class="container">
-        <h2 class="section-title">Featured Products</h2>
-        
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">All Products</button>
-            <button class="filter-btn" data-filter="tiktok">TikTok Finds</button>
-            <button class="filter-btn" data-filter="amazon">Amazon</button>
-            <button class="filter-btn" data-filter="other">Other</button>
-        </div>
+    <section id="products" class="products-section">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Products</button>
+                <button class="filter-btn" data-filter="tiktok">TikTok</button>
+                <button class="filter-btn" data-filter="amazon">Amazon</button>
+                <button class="filter-btn" data-filter="instagram">Instagram</button>
+            </div>
 
-        <div class="products-grid" id="products-grid">
-            <!-- Products will be loaded here dynamically -->
+            <div class="products-grid" id="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
         </div>
     </section>
 
-    <!-- Admin Login Modal -->
-    <div class="modal" id="login-modal">
-        <div class="modal-content">
-            <button class="close-modal" id="close-login-modal">&times;</button>
-            <div class="auth-container">
-                <h2>Admin Login</h2>
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Login</button>
-                </form>
-                <div class="auth-info">
-                    <p><strong>Demo Credentials:</strong></p>
-                    <p>Username: admin</p>
-                    <p>Password: password123</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <section class="admin-panel container" id="admin-panel">
-        <div class="admin-header">
-            <h2 class="section-title">Admin Panel</h2>
-            <button class="btn btn-danger" id="logout-btn">Logout</button>
-        </div>
-        
-        <div class="tabs">
-            <div class="tab active" data-tab="add-product">Add Product</div>
-            <div class="tab" data-tab="bulk-upload">Bulk Upload</div>
-            <div class="tab" data-tab="manage-products">Manage Products</div>
-        </div>
-
-        <div class="tab-content active" id="add-product-tab">
-            <form id="add-product-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="product-title">Product Title</label>
-                        <input type="text" id="product-title" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-price">Price (₱)</label>
-                        <input type="number" id="product-price" class="form-control" step="0.01" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="product-description">Description</label>
-                    <textarea id="product-description" class="form-control" required></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="product-affiliate-link">Affiliate Link</label>
-                        <input type="url" id="product-affiliate-link" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-source">Source</label>
-                        <select id="product-source" class="form-control" required>
-                            <option value="tiktok">TikTok</option>
-                            <option value="amazon">Amazon</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="product-category">Category</label>
-                        <input type="text" id="product-category" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-image">Image URL</label>
-                        <input type="url" id="product-image" class="form-control" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="product-tags">Tags (comma separated)</label>
-                    <input type="text" id="product-tags" class="form-control" placeholder="tag1, tag2, tag3">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Add Product</button>
-            </form>
-        </div>
-
-        <div class="tab-content" id="bulk-upload-tab">
-            <div class="form-group">
-                <label>Bulk Product Upload</label>
-                <p>Upload multiple products using JSON format.</p>
-            </div>
-
-            <div class="form-group">
-                <label for="bulk-data">Product Data (JSON format)</label>
-                <textarea id="bulk-data" class="form-control" rows="10" placeholder='[{"title": "Product 1", "price": 1000, "description": "...", "affiliateLink": "...", "source": "tiktok", "category": "Beauty", "image": "..."}]'></textarea>
-            </div>
-
-            <button class="btn btn-primary" id="import-bulk">Import Products</button>
-        </div>
-
-        <div class="tab-content" id="manage-products-tab">
-            <div id="admin-products-list">
-                <!-- Admin products list will be loaded here -->
+    <!-- Trending Section -->
+    <section id="trending" class="trending-section">
+        <div class="container">
+            <h2 class="section-title">🔥 Trending Now</h2>
+            <div class="trending-grid" id="trending-grid">
+                <!-- Trending products will be loaded here -->
             </div>
         </div>
     </section>
@@ -174,8 +97,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>AffiliateShop</h3>
-                    <p>Your one-stop destination for the best affiliate products from TikTok, Amazon, and other platforms.</p>
+                    <h3>TikShop</h3>
+                    <p>Your gateway to viral products from TikTok, Amazon, and social media.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-tiktok"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
@@ -187,19 +110,19 @@
                     <h3>Quick Links</h3>
                     <a href="#">Home</a>
                     <a href="#products">Products</a>
-                    <a href="#" id="footer-admin-link">Admin</a>
+                    <a href="admin.html">Admin</a>
                     <a href="#about">About Us</a>
                     <a href="#contact">Contact</a>
                 </div>
                 <div class="footer-section">
                     <h3>Contact Us</h3>
-                    <p><i class="fas fa-envelope"></i> info@affiliateshop.com</p>
+                    <p><i class="fas fa-envelope"></i> hello@tikshop.com</p>
                     <p><i class="fas fa-phone"></i> +63 (555) 123-4567</p>
-                    <p><i class="fas fa-map-marker-alt"></i> 123 Commerce St, Manila, Philippines 1000</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Manila, Philippines</p>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 AffiliateShop. All rights reserved.</p>
+                <p>&copy; 2023 TikShop. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -218,9 +141,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
-    <script src="js/admin.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
