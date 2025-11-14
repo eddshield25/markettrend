@@ -28,84 +28,50 @@ async function login(username, password) {
 // Logout function
 function logout() {
     localStorage.removeItem('adminLoggedIn');
-    hideAdminPanel();
     showToast('Logged out successfully', 'success');
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
 }
 
-// Show admin panel
-function showAdminPanel() {
-    document.getElementById('admin-panel').classList.add('active');
-    document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
-}
-
-// Hide admin panel
-function hideAdminPanel() {
-    document.getElementById('admin-panel').classList.remove('active');
-}
-
-// Initialize authentication
-function initAuth() {
-    const loginModal = document.getElementById('login-modal');
-    const closeLoginModal = document.getElementById('close-login-modal');
-    const adminLoginLink = document.getElementById('admin-login-link');
-    const footerAdminLink = document.getElementById('footer-admin-link');
+// Initialize authentication for admin panel
+function initAdminAuth() {
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
+    const adminLogin = document.getElementById('admin-login');
+    const adminDashboard = document.getElementById('admin-dashboard');
 
-    // Open login modal
-    adminLoginLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginModal.classList.add('active');
-    });
-
-    footerAdminLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (isLoggedIn()) {
-            showAdminPanel();
-        } else {
-            loginModal.classList.add('active');
-        }
-    });
-
-    // Close login modal
-    closeLoginModal.addEventListener('click', () => {
-        loginModal.classList.remove('active');
-    });
+    // Check if user is already logged in
+    if (isLoggedIn()) {
+        adminLogin.style.display = 'none';
+        adminDashboard.style.display = 'flex';
+        return true;
+    }
 
     // Login form submission
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-        const result = await login(username, password);
-        
-        if (result.success) {
-            loginModal.classList.remove('active');
-            showAdminPanel();
-            showToast('Login successful!', 'success');
-            loginForm.reset();
-            // Refresh admin products list
-            if (typeof updateAdminProductsList === 'function') {
-                updateAdminProductsList();
+            const result = await login(username, password);
+            
+            if (result.success) {
+                showToast('Login successful!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showToast(result.message, 'error');
             }
-        } else {
-            showToast(result.message, 'error');
-        }
-    });
+        });
+    }
 
     // Logout button
-    logoutBtn.addEventListener('click', logout);
-
-    // Close modal when clicking outside
-    loginModal.addEventListener('click', (e) => {
-        if (e.target === loginModal) {
-            loginModal.classList.remove('active');
-        }
-    });
-
-    // Auto-show admin panel if already logged in
-    if (isLoggedIn()) {
-        // Admin panel will be shown when needed
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
     }
+
+    return false;
 }
