@@ -1,5 +1,189 @@
 // Admin panel functionality
 
+// Initialize admin panel
+function initAdminPanel() {
+    if (!initAdminAuth()) return; // Stop if not logged in
+    
+    setupAdminNavigation();
+    loadAdminDashboard();
+    setupProductManagement();
+    setupBulkUpload();
+}
+
+// Setup admin navigation
+function setupAdminNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const pageTitle = document.getElementById('page-title');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tab = item.getAttribute('data-tab');
+            
+            // Update active nav item
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Show corresponding tab content
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+            
+            // Update page title
+            pageTitle.textContent = item.querySelector('span').textContent;
+            
+            // Load specific tab data
+            switch(tab) {
+                case 'dashboard':
+                    loadAdminDashboard();
+                    break;
+                case 'products':
+                    loadAdminProducts();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        });
+    });
+}
+
+// Load admin dashboard
+function loadAdminDashboard() {
+    const products = loadProducts();
+    const activeProducts = products.filter(p => p.status === 'active');
+    const featuredProducts = activeProducts.filter(p => p.featured);
+    const tiktokProducts = activeProducts.filter(p => p.source === 'tiktok');
+    const amazonProducts = activeProducts.filter(p => p.source === 'amazon');
+    
+    // Update stats
+    document.getElementById('total-products').textContent = activeProducts.length;
+    document.getElementById('featured-products').textContent = featuredProducts.length;
+    document.getElementById('tiktok-products').textContent = tiktokProducts.length;
+    document.getElementById('amazon-products').textContent = amazonProducts.length;
+    
+    // Load recent activity
+    loadRecentActivity();
+}
+
+// Load recent activity
+function loadRecentActivity() {
+    const activityList = document.getElementById('activity-list');
+    const products = loadProducts();
+    
+    // Get recent products (last 5)
+    const recentProducts = products
+        .filter(p => p.status === 'active')
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 5);
+    
+    activityList.innerHTML = recentProducts.map(product => `
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="activity-info">
+                <p><strong>${product.title}</strong> added</p>
+                <span class="activity-time">${formatPrice(product.price)} • ${product.source}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Setup product management
+function setupProductManagement() {
+    const searchInput = document.getElementById('product-search');
+    const filterSelect = document.getElementById('product-filter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(() => {
+            loadAdminProducts();
+        }, 300));
+    }
+    
+    if (filterSelect) {
+        filterSelect.addEventListener('change', loadAdminProducts);
+    }
+    
+    loadAdminProducts();
+}
+
+// Load admin products
+function loadAdminProducts() {
+    const products = loadProducts();
+    const searchTerm = document.getElementById('product-search')?.value.toLowerCase() || '';
+    const filterValue = document.getElementById('product-filter')?.value || 'all';
+    
+    let filteredProducts = products;
+    
+    // Apply search filter
+    if (searchTerm) {
+        filteredProducts = filteredProducts.filter(product => 
+            product.title.toLowerCase().includes(searchTerm) ||
+            product.description.toLowerCase().includes(searchTerm) ||
+            product.category.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    // Apply source filter
+    if (filterValue !== 'all') {
+        filteredProducts = filteredProducts.filter(product => product.source === filterValue);
+    }
+    
+    displayAdminProducts(filteredProducts);
+}
+
+// Display admin products in table
+function displayAdminProducts(products) {
+    const adminProductsList = document.getElementById('admin-products-list');
+    if (!adminProductsList) return;
+    
+    adminProductsList.innerHTML = products.map(product => `
+        <tr>
+            <td>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="${product.image}" alt="${product.title}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 500;">${product.title}</div>
+                        <div style="font-size: 0.8rem; color: var(--admin-text-secondary);">${product.category}</div>
+                    </div>
+                </div>
+            </td>
+            <td>${formatPrice(product.price)}</td>
+            <td>
+                <span class="product-source" style="background: var(--admin-sidebar); padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem;">
+                    ${product.source}
+                </span>
+            </td>
+            <td>
+                <span style="padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem; background: ${product.status === 'active' ? 'var(--admin-success)' : 'var(--admin-danger)'}; color: white;">
+                    ${product.status}
+                </span>
+            </td>
+            <td>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-outline" onclick="editProduct('${product.id}')" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteProduct('${product.id}')" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    if (products.length === 0) {
+        adminProductsList.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--admin-text-secondary);">
+                    No products found
+                </td>
+            </tr>
+        `;
+    }
+}
+
 // Add new product
 async function addProduct() {
     const title = document.getElementById('product-title').value;
@@ -10,6 +194,7 @@ async function addProduct() {
     const category = document.getElementById('product-category').value;
     const image = document.getElementById('product-image').value;
     const tags = document.getElementById('product-tags').value.split(',').map(tag => tag.trim());
+    const featured = document.getElementById('product-featured').checked;
     
     // Validate inputs
     if (!title || !price || !description || !affiliateLink || !category || !image) {
@@ -36,7 +221,7 @@ async function addProduct() {
         category,
         image,
         tags,
-        featured: false,
+        featured,
         rating: 4.0 + Math.random(),
         reviewCount: Math.floor(Math.random() * 1000) + 100,
         status: "active"
@@ -44,62 +229,15 @@ async function addProduct() {
     
     products.push(newProduct);
     saveProducts(products);
-    displayProducts(getActiveProducts());
-    updateAdminProductsList();
-    document.getElementById('add-product-form').reset();
-    showToast('Product added successfully!', 'success');
-}
-
-// Update admin products list
-function updateAdminProductsList() {
-    const adminProductsList = document.getElementById('admin-products-list');
-    adminProductsList.innerHTML = '<p>Loading...</p>';
     
-    setTimeout(() => {
-        const products = loadProducts();
-        
-        if (products.length === 0) {
-            adminProductsList.innerHTML = '<p>No products added yet.</p>';
-            return;
-        }
-        
-        adminProductsList.innerHTML = '';
-        
-        products.forEach(product => {
-            const productItem = document.createElement('div');
-            productItem.className = 'product-item';
-            productItem.style.cssText = `
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1rem;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                margin-bottom: 1rem;
-            `;
-            
-            productItem.innerHTML = `
-                <div>
-                    <h4 style="margin: 0 0 0.5rem;">${product.title}</h4>
-                    <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: #64748b;">
-                        <span>Source: ${product.source}</span>
-                        <span>Price: ${formatPrice(product.price)}</span>
-                        <span>Status: ${product.status}</span>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button class="btn" onclick="editProduct('${product.id}')" style="padding: 0.5rem;">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn" onclick="deleteProduct('${product.id}')" style="padding: 0.5rem; background: #ef4444; color: white;">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            adminProductsList.appendChild(productItem);
-        });
-    }, 500);
+    // Reset form
+    document.getElementById('add-product-form').reset();
+    
+    showToast('Product added successfully!', 'success');
+    
+    // Refresh products list
+    loadAdminProducts();
+    loadAdminDashboard();
 }
 
 // Edit product
@@ -121,12 +259,14 @@ function editProduct(productId) {
     document.getElementById('product-category').value = product.category;
     document.getElementById('product-image').value = product.image;
     document.getElementById('product-tags').value = product.tags.join(', ');
+    document.getElementById('product-featured').checked = product.featured;
     
     // Switch to add product tab
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     document.querySelector('[data-tab="add-product"]').classList.add('active');
     document.getElementById('add-product-tab').classList.add('active');
+    document.getElementById('page-title').textContent = 'Edit Product';
     
     // Change button text and behavior
     const submitButton = document.querySelector('#add-product-form button[type="submit"]');
@@ -157,6 +297,7 @@ async function updateProduct(productId) {
     const category = document.getElementById('product-category').value;
     const image = document.getElementById('product-image').value;
     const tags = document.getElementById('product-tags').value.split(',').map(tag => tag.trim());
+    const featured = document.getElementById('product-featured').checked;
     
     await simulateAPIDelay(); // Simulate API call
     
@@ -170,12 +311,11 @@ async function updateProduct(productId) {
         source,
         category,
         image,
-        tags
+        tags,
+        featured
     };
     
     saveProducts(products);
-    displayProducts(getActiveProducts());
-    updateAdminProductsList();
     
     // Reset form and button
     document.getElementById('add-product-form').reset();
@@ -186,7 +326,18 @@ async function updateProduct(productId) {
         addProduct();
     };
     
+    // Switch back to products tab
+    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelector('[data-tab="products"]').classList.add('active');
+    document.getElementById('products-tab').classList.add('active');
+    document.getElementById('page-title').textContent = 'Products';
+    
     showToast('Product updated successfully!', 'success');
+    
+    // Refresh products list
+    loadAdminProducts();
+    loadAdminDashboard();
 }
 
 // Delete product
@@ -206,9 +357,19 @@ async function deleteProduct(productId) {
         products[productIndex].status = 'inactive';
         saveProducts(products);
         
-        displayProducts(getActiveProducts());
-        updateAdminProductsList();
         showToast('Product deleted successfully!', 'success');
+        
+        // Refresh products list
+        loadAdminProducts();
+        loadAdminDashboard();
+    }
+}
+
+// Setup bulk upload
+function setupBulkUpload() {
+    const importBulkBtn = document.getElementById('import-bulk');
+    if (importBulkBtn) {
+        importBulkBtn.addEventListener('click', importBulkProducts);
     }
 }
 
@@ -232,65 +393,105 @@ async function importBulkProducts() {
         await simulateAPIDelay(); // Simulate API call
         
         const products = loadProducts();
+        let importedCount = 0;
         
         newProducts.forEach(productData => {
-            const newProduct = {
-                id: generateId(),
-                ...productData,
-                status: "active",
-                rating: 4.0 + Math.random(),
-                reviewCount: Math.floor(Math.random() * 1000) + 100
-            };
-            products.push(newProduct);
+            // Validate required fields
+            if (productData.title && productData.price && productData.description && 
+                productData.affiliateLink && productData.source && productData.category && productData.image) {
+                
+                const newProduct = {
+                    id: generateId(),
+                    ...productData,
+                    status: "active",
+                    rating: 4.0 + Math.random(),
+                    reviewCount: Math.floor(Math.random() * 1000) + 100,
+                    featured: productData.featured || false,
+                    originalPrice: productData.originalPrice || productData.price * 1.2,
+                    tags: productData.tags || []
+                };
+                
+                products.push(newProduct);
+                importedCount++;
+            }
         });
         
         saveProducts(products);
-        displayProducts(getActiveProducts());
-        updateAdminProductsList();
         document.getElementById('bulk-data').value = '';
-        showToast(`${newProducts.length} products imported successfully!`, 'success');
+        showToast(`${importedCount} products imported successfully!`, 'success');
+        
+        // Refresh products list and dashboard
+        loadAdminProducts();
+        loadAdminDashboard();
+        
     } catch (error) {
         showToast('Error importing products. Check JSON format.', 'error');
     }
 }
 
-// Initialize admin panel
-function initAdmin() {
-    const addProductForm = document.getElementById('add-product-form');
-    const importBulkBtn = document.getElementById('import-bulk');
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    // Add product form
-    addProductForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        addProduct();
-    });
-
-    // Import bulk products
-    importBulkBtn.addEventListener('click', importBulkProducts);
-
-    // Tab switching
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('data-tab');
-            
-            // Update active tab
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            // Show corresponding tab content
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === `${tabId}-tab`) {
-                    content.classList.add('active');
-                }
-            });
+// Load analytics
+function loadAnalytics() {
+    const products = loadProducts();
+    const activeProducts = products.filter(p => p.status === 'active');
+    
+    // Source distribution
+    const sourceStats = document.getElementById('source-stats');
+    if (sourceStats) {
+        const sources = {};
+        activeProducts.forEach(product => {
+            sources[product.source] = (sources[product.source] || 0) + 1;
         });
-    });
-
-    // Update admin products list if logged in
-    if (isLoggedIn()) {
-        updateAdminProductsList();
+        
+        sourceStats.innerHTML = Object.entries(sources).map(([source, count]) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.5rem; background: var(--admin-card); border-radius: 4px;">
+                <span>${source}</span>
+                <span style="font-weight: 500;">${count} products</span>
+            </div>
+        `).join('');
+    }
+    
+    // Price range stats
+    const priceStats = document.getElementById('price-stats');
+    if (priceStats) {
+        const priceRanges = {
+            'Under ₱1,000': 0,
+            '₱1,000 - ₱2,500': 0,
+            '₱2,500 - ₱5,000': 0,
+            'Over ₱5,000': 0
+        };
+        
+        activeProducts.forEach(product => {
+            if (product.price < 1000) priceRanges['Under ₱1,000']++;
+            else if (product.price <= 2500) priceRanges['₱1,000 - ₱2,500']++;
+            else if (product.price <= 5000) priceRanges['₱2,500 - ₱5,000']++;
+            else priceRanges['Over ₱5,000']++;
+        });
+        
+        priceStats.innerHTML = Object.entries(priceRanges).map(([range, count]) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.5rem; background: var(--admin-card); border-radius: 4px;">
+                <span>${range}</span>
+                <span style="font-weight: 500;">${count} products</span>
+            </div>
+        `).join('');
     }
 }
+
+// Initialize add product form
+function initAddProductForm() {
+    const addProductForm = document.getElementById('add-product-form');
+    if (addProductForm) {
+        addProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addProduct();
+        });
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on the admin page
+    if (document.getElementById('admin-dashboard')) {
+        initAdminPanel();
+        initAddProductForm();
+    }
+});
