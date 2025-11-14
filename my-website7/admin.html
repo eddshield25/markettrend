@@ -20,20 +20,39 @@
                 <form id="login-form" class="login-form">
                     <div class="form-group">
                         <label>Username</label>
-                        <input type="text" id="username" value="admin" required>
+                        <input type="text" id="username" placeholder="Enter your username" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="password" value="password123" required>
+                        <input type="password" id="password" placeholder="Enter your password" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
+                    <div class="login-links">
+                        <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                    </div>
                 </form>
-                <div class="demo-credentials">
-                    <p><strong>Demo Credentials:</strong></p>
-                    <p>Username: admin</p>
-                    <p>Password: password123</p>
-                </div>
                 <a href="index.html" class="back-link">← Back to Store</a>
+            </div>
+        </div>
+
+        <!-- Forgot Password Screen -->
+        <div id="forgot-password-screen" class="login-screen" style="display: none;">
+            <div class="login-box">
+                <div class="login-header">
+                    <i class="fas fa-key"></i>
+                    <h1>Reset Password</h1>
+                    <p>Enter your email to reset password</p>
+                </div>
+                <form id="forgot-password-form" class="login-form">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reset-email" placeholder="Enter your email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                    <div class="login-links">
+                        <a href="#" onclick="showLogin()">Back to Login</a>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -55,6 +74,7 @@
                 <button class="tab-btn active" onclick="showTab('products-tab')">Products</button>
                 <button class="tab-btn" onclick="showTab('add-tab')">Add Product</button>
                 <button class="tab-btn" onclick="showTab('bulk-tab')">Bulk Upload</button>
+                <button class="tab-btn" onclick="showTab('settings-tab')">Settings</button>
             </div>
 
             <!-- Tab Content -->
@@ -113,6 +133,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-featured">
+                                <span class="checkmark"></span>
+                                Featured Product
+                            </label>
+                        </div>
+
                         <button type="submit" class="btn btn-primary">Add Product</button>
                     </form>
                 </div>
@@ -121,8 +149,39 @@
                 <div id="bulk-tab" class="tab-pane">
                     <h2>Bulk Upload</h2>
                     <div class="bulk-upload">
+                        <div class="upload-instructions">
+                            <h3>JSON Format Example:</h3>
+                            <pre>[
+  {
+    "title": "Product Name",
+    "price": 999.99,
+    "description": "Product description",
+    "affiliateLink": "https://example.com/link",
+    "source": "tiktok",
+    "category": "Category",
+    "image": "https://example.com/image.jpg",
+    "featured": true
+  }
+]</pre>
+                        </div>
                         <textarea id="bulk-data" placeholder='Paste JSON data here...'></textarea>
                         <button onclick="importBulkProducts()" class="btn btn-primary">Import Products</button>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-pane">
+                    <h2>Admin Settings</h2>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Change Password</label>
+                            <input type="password" id="new-password" placeholder="New password">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="confirm-password" placeholder="Confirm new password">
+                        </div>
+                        <button onclick="changePassword()" class="btn btn-primary">Update Password</button>
                     </div>
                 </div>
             </div>
