@@ -1,103 +1,110 @@
-// Main application initialization for customer frontend
+// Main Frontend JavaScript
 
-// Initialize the app
+let currentFilter = 'all';
+
+// Initialize the frontend
 function init() {
-    initAuth();
-    initProducts();
+    displayProducts();
     setupEventListeners();
-    setupButtonHandlers();
 }
 
-// Set up button handlers
-function setupButtonHandlers() {
-    // Shop Now button
-    const shopNowBtn = document.querySelector('.btn-primary[href="#products"]');
-    if (shopNowBtn) {
-        shopNowBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productsSection = document.getElementById('products');
-            if (productsSection) {
-                productsSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
+// Display products on the frontend
+function displayProducts() {
+    const products = loadProducts();
+    const activeProducts = products.filter(p => !p.status || p.status === 'active');
+    
+    // Filter products based on current filter
+    let filteredProducts = activeProducts;
+    if (currentFilter !== 'all') {
+        filteredProducts = activeProducts.filter(p => p.source === currentFilter);
     }
-
-    // Trending Now button
-    const trendingBtn = document.querySelector('.btn-secondary[href="#trending"]');
-    if (trendingBtn) {
-        trendingBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const trendingSection = document.getElementById('trending');
-            if (trendingSection) {
-                trendingSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
+    
+    // Display in main grid
+    const productsGrid = document.getElementById('products-grid');
+    if (productsGrid) {
+        productsGrid.innerHTML = filteredProducts.map(product => `
+            <div class="product-card">
+                <img src="${product.image}" alt="${product.title}" class="product-image">
+                <div class="product-info">
+                    <span class="product-source">${product.source}</span>
+                    <h3 class="product-title">${product.title}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-price">${formatPrice(product.price)}</div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="viewProduct('${product.id}')">View Details</button>
+                        <a href="${product.affiliateLink}" target="_blank" class="btn btn-primary">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
-
-    // Admin link
-    const adminLink = document.getElementById('admin-link');
-    if (adminLink) {
-        adminLink.addEventListener('click', (e) => {
-            if (!isLoggedIn()) {
-                e.preventDefault();
-                const loginModal = document.getElementById('login-modal');
-                if (loginModal) {
-                    loginModal.classList.add('active');
-                }
-            }
-        });
+    
+    // Display featured products in trending section
+    const trendingGrid = document.getElementById('trending-grid');
+    if (trendingGrid) {
+        const featuredProducts = activeProducts.filter(p => p.featured);
+        trendingGrid.innerHTML = featuredProducts.map(product => `
+            <div class="product-card">
+                <img src="${product.image}" alt="${product.title}" class="product-image">
+                <div class="product-info">
+                    <span class="product-source">${product.source}</span>
+                    <h3 class="product-title">${product.title}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-price">${formatPrice(product.price)}</div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="viewProduct('${product.id}')">View Details</button>
+                        <a href="${product.affiliateLink}" target="_blank" class="btn btn-primary">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
 }
 
-// Set up event listeners
+// Filter products
+function filterProducts(source) {
+    currentFilter = source;
+    
+    // Update active filter button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    displayProducts();
+}
+
+// View product details
+function viewProduct(productId) {
+    const products = loadProducts();
+    const product = products.find(p => p.id === productId);
+    
+    if (product) {
+        // Open product link in new tab
+        window.open(product.affiliateLink, '_blank');
+    }
+}
+
+// Scroll to products section
+function scrollToProducts() {
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Scroll to trending section
+function scrollToTrending() {
+    const trendingSection = document.getElementById('trending');
+    if (trendingSection) {
+        trendingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Setup event listeners
 function setupEventListeners() {
-    // Mobile menu toggle
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-    }
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
-            if (navLinks) navLinks.classList.remove('active');
-        }
-    });
-
-    // Close all modals when pressing Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeAllModals();
-        }
-    });
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href !== '#products' && href !== '#trending') {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }
-        });
-    });
+    // Add any additional event listeners here
 }
 
-// Initialize the app when DOM is loaded
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', init);
