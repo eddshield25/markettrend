@@ -3,6 +3,11 @@
 // Show toast notification
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
+    if (!toast) {
+        console.log('Toast element not found');
+        return;
+    }
+    
     toast.textContent = message;
     toast.className = 'toast';
     
@@ -19,6 +24,10 @@ function showToast(message, type = 'success') {
 
 // Format price in Philippine Peso
 function formatPrice(price) {
+    if (isNaN(price)) {
+        console.error('Invalid price:', price);
+        return '₱0.00';
+    }
     return `₱${parseFloat(price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
@@ -59,4 +68,11 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// Debug function to check if scripts are loaded
+function checkScripts() {
+    console.log('Utils.js loaded successfully');
+    console.log('isValidUrl test:', isValidUrl('https://example.com'));
+    console.log('formatPrice test:', formatPrice(1234.56));
 }
