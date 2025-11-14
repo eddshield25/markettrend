@@ -1,10 +1,8 @@
-// Main application initialization
+// Main application initialization for customer frontend
 
 // Initialize the app
 function init() {
-    initAuth();
     initProducts();
-    initAdmin();
     setupEventListeners();
 }
 
@@ -14,14 +12,16 @@ function setupEventListeners() {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
 
-    mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-    });
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
-            navLinks.classList.remove('active');
+            if (navLinks) navLinks.classList.remove('active');
         }
     });
 
